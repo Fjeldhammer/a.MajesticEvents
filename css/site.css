@@ -50,7 +50,7 @@ footer {
 /* #endregion Sticky Footer */
 
 .btn-primary {
-    --bs-btn-bg: var(--wf-theme-600);
+    --bs-btn-bg: var(--wf-theme-800);
     --bs-btn-border-color: var(--wf-theme-600);
     --bs-btn-hover-bg: var(--wf-theme-700);
     --bs-btn-hover-border-color: var(--wf-theme-700);
