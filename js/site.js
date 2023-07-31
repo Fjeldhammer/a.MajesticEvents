@@ -189,6 +189,28 @@ function displayStats(events) {
 
 }
 
+function filterEvents(dropdownItemClicked) {
+    let cityName = dropdownItemClicked.innerText;
+
+    let allEvents = getEvents();
+
+
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
