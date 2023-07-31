@@ -80,31 +80,207 @@
     <main class="container py-3">
         <div class="row">
             <h2 class="border-bottom border-2 border-dark">The Code</h2>
-            <div class="col-12 col-lg-8">
+            <div class="col-12 col-lg-8 col-xl-9">
                 <pre class="line-numbers">
                     <code class="language-js">
-                        function displayMessage() {
-                            let inputBox = document.getElementById('message');
-                        
-                            let message = inputBox.value;
-                        
-                            Swal.fire(
-                                {
-                                    backdrop: false,
-                                    title: 'Majestic Events',
-                                    text: message
-                                }
-                            );
-                        }
+                        const events = [
+    {
+        event: "Galway Gala",
+        city: "New York",
+        state: "NY",
+        attendance: 240000,
+        date: "04/17/2017",
+    },
+        // ** other stored events listed here ** */
+];
+
+function getEvents() {    
+    let storedString = localStorage.getItem('altairMaj-events') || '[]'; 
+
+    let storedEvents = JSON.parse(storedString);
+
+    if (storedEvents == 0) {
+        storedEvents = events;
+        localStorage.setItem('altairMaj-events', JSON.stringify(events));
+    }
+    return storedEvents;
+}
+
+function buildDropDown() {
+    let currentEvents = getEvents();
+
+    let eventCities = currentEvents.map(event => event.city);
+
+    let distinctCities = new Set(eventCities);
+    let dropdownChoices = ['All', ...distinctCities];
+
+    const cityDropdown = document.getElementById('city-dropdown');
+    const dropdownItemTemplate =document.getElementById('dropdown-template');
+
+    cityDropdown.innerHTML = '';
+
+    dropdownChoices.forEach(choice => {
+
+        let dropdownItemCopy = dropdownItemTemplate.content.cloneNode(true);
+
+        let aTag = dropdownItemCopy.querySelector('a');
+        aTag.innerText = choice;
+
+        cityDropdown.appendChild(dropdownItemCopy);
+    });
+
+    document.getElementById('stats-location').textContent = 'All';
+    displayEvents(currentEvents);
+    displayStats(currentEvents);
+}
+
+function displayEvents(events) {
+
+    const eventsTable = document.getElementById('events-table');
+
+    const eventTemplate = document.getElementById('table-row-template');
+
+    eventsTable.innerHTML = '';
+
+    for(let index = 0; index < events.length; index += 1) {
+
+        let event = events[index];
+
+        let tableRow = eventTemplate.content.cloneNode(true);
+
+        let eventNameCell = tableRow.querySelector('[data-id="event"]');
+        eventNameCell.innerText = event.event;
+
+        tableRow.querySelector('[data-id="city"]').innerText = event.city;
+        tableRow.querySelector('[data-id="state"]').innerText = event.state;
+        tableRow.querySelector('[data-id="attendance"]').innerText = event.attendance.toLocaleString();
+        tableRow.querySelector('[data-id="date"]').innerText = new Date(event.date).toLocaleDateString();
+
+        eventsTable.appendChild(tableRow);
+    }
+}
+
+function displayStats(events) {
+
+    let total = 0;
+    let max = 0;
+    let min = events[0].attendance;
+
+    for(let index = 0; index < events.length; index++) {
+        let event = events[index];
+
+        total += event.attendance;
+
+        if (event.attendance > max) {
+            max = event.attendance;
+        }
+
+        if (event.attendance < min) {
+            min = event.attendance;
+        }
+    }
+
+    let average = total / events.length;
+
+    document.getElementById('total-attendance').innerHTML = total.toLocaleString();
+    document.getElementById('avg-attendance').innerHTML = Math.round(average).toLocaleString();
+    document.getElementById('max-attended').innerHTML = max.toLocaleString();
+    document.getElementById('min-attended').innerHTML = min.toLocaleString();
+}
+
+function filterEvents(dropdownItemClicked) {
+    let cityName = dropdownItemClicked.innerText;
+
+    document.getElementById('stats-location').textContent = cityName
+
+    let allEvents = getEvents();    
+    let filteredEvents = [];
+
+    if (cityName == 'All') {
+
+        filteredEvents = allEvents;
+
+    } else {
+
+        filteredEvents = allEvents.filter(event => event.city == cityName);
+    }
+
+    displayStats(filteredEvents);
+    displayEvents(filteredEvents);
+}
+
+function saveEvent() {
+
+    let eventName = document.getElementById('eventName').value;
+    let city = document.getElementById('eventCity').value;
+
+    let stateSelect = document.getElementById('eventState');
+    let selectedIndex = stateSelect.selectedIndex;
+    let selectedOption = stateSelect.options[selectedIndex];
+
+    let state = selectedOption.text;
+
+    let attendance = parseInt(document.getElementById('eventAttendance').value);
+
+    let dateString = document.getElementById('eventDate').value;
+    dateString = `${dateString} 00:00`;
+
+    let eventDate = new Date(dateString).toLocaleDateString();
+
+    let newEvent = {
+        event: eventName,
+        city: city,
+        state: state,
+        attendance: attendance,
+        date: eventDate,
+    };
+
+    let allEvents = getEvents();
+
+    allEvents.push(newEvent);
+
+    localStorage.setItem('altairMaj-events', JSON.stringify(allEvents)); // JSON.stringify = serialization
+
+    document.getElementById('newEventForm').reset();
+
+    buildDropDown();
+
+    let modalEvent = document.getElementById('newEventForm');
+    let modal = bootstrap.Modal.getInstance(addEvent);
+    modal.hide();
+}
                     </code>
                 </pre>
             </div>
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-lg-4 col-xl-3">
                 <p>The Code is structured in multiple functions</p>
-                <h5>displayMessage</h5>
+                <h5>const events</h5>
                 <p>
-                    Shows a SweetAlert with the value of the <code>message</code>
-                    variable
+                    This is where we have placed the array of event data given at the beginning of the challenge.
+                </p>
+                <h5>getEvents</h5>
+                <p>
+                    The function ...
+                </p>
+                <h5>buildDropDown</h5>
+                <p>
+                    The function ...
+                </p>
+                <h5>displayEvents</h5>
+                <p>
+                    The function ...
+                </p>
+                <h5>displayStats</h5>
+                <p>
+                    The function ...
+                </p>
+                <h5>filterEvents</h5>
+                <p>
+                    The function ...
+                </p>
+                <h5>saveEvent</h5>
+                <p>
+                    The function ...
                 </p>
 
             </div>

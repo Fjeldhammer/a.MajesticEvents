@@ -87,7 +87,17 @@ const events = [
 ];
 
 function getEvents() {
-    return events;
+    // next 2 lines are saying: if there is something there (altairMaj-events) use it ||=(OR) if nothing there use (empty array) '[]'
+    let storedString = localStorage.getItem('altairMaj-events') || '[]'; 
+
+    let storedEvents = JSON.parse(storedString); //JSON.parse = de-serialization
+
+    if (storedEvents == 0) {
+        storedEvents = events;
+        localStorage.setItem('altairMaj-events', JSON.stringify(events));
+    }
+
+    return storedEvents;
 }
 
 function buildDropDown() {
@@ -108,6 +118,8 @@ function buildDropDown() {
     const cityDropdown = document.getElementById('city-dropdown');
     const dropdownItemTemplate =document.getElementById('dropdown-template');
 
+    cityDropdown.innerHTML = '';
+
     // with each unique city:
     dropdownChoices.forEach(choice => {
 
@@ -122,6 +134,7 @@ function buildDropDown() {
         cityDropdown.appendChild(dropdownItemCopy);
     });
 
+    document.getElementById('stats-location').textContent = 'All';
     displayEvents(currentEvents);
     displayStats(currentEvents);
 }
@@ -152,8 +165,8 @@ function displayEvents(events) {
 
         tableRow.querySelector('[data-id="city"]').innerText = event.city;
         tableRow.querySelector('[data-id="state"]').innerText = event.state;
-        tableRow.querySelector('[data-id="attendance"]').innerText = event.attendance;
-        tableRow.querySelector('[data-id="date"]').innerText = event.date;
+        tableRow.querySelector('[data-id="attendance"]').innerText = event.attendance.toLocaleString();
+        tableRow.querySelector('[data-id="date"]').innerText = new Date(event.date).toLocaleDateString();
 
         // -- insert the event data into table
         eventsTable.appendChild(tableRow);
@@ -192,10 +205,78 @@ function displayStats(events) {
 function filterEvents(dropdownItemClicked) {
     let cityName = dropdownItemClicked.innerText;
 
+    document.getElementById('stats-location').textContent = cityName
+
+    let allEvents = getEvents();    
+    let filteredEvents = [];
+
+    if (cityName == 'All') {
+
+        filteredEvents = allEvents;
+
+    } else {
+
+        // for(let i = 0; i < allEvents.length; i += 1) {
+        //     let event = allEvents[i];
+    
+        //     if (event.city == cityName) {
+        //         filteredEvents.push(event);
+        //     }
+        // }  //**this = 5 lines below */
+
+        // filteredEvents = allEvents.filter(event => {
+        //     if (event.city == cityName) {
+        //         return event;
+        //     }
+        // }); //**this = 1 line below */
+
+        filteredEvents = allEvents.filter(event => event.city == cityName);
+    
+    }
+
+    displayStats(filteredEvents);
+    displayEvents(filteredEvents);
+}
+
+function saveEvent() {
+
+    let eventName = document.getElementById('eventName').value;
+    let city = document.getElementById('eventCity').value;
+
+    let stateSelect = document.getElementById('eventState');
+    let selectedIndex = stateSelect.selectedIndex;
+    let selectedOption = stateSelect.options[selectedIndex];
+
+    let state = selectedOption.text;
+
+    let attendance = parseInt(document.getElementById('eventAttendance').value);
+
+    let dateString = document.getElementById('eventDate').value;
+    dateString = `${dateString} 00:00`;
+
+    let eventDate = new Date(dateString).toLocaleDateString();
+
+    let newEvent = {
+        event: eventName,
+        city: city,
+        state: state,
+        attendance: attendance,
+        date: eventDate,
+    };
+
     let allEvents = getEvents();
 
+    allEvents.push(newEvent);
 
-    
+    localStorage.setItem('altairMaj-events', JSON.stringify(allEvents)); // JSON.stringify = serialization
+
+    document.getElementById('newEventForm').reset();
+
+    buildDropDown();
+
+    let modalEvent = document.getElementById('newEventForm');
+    let modal = bootstrap.Modal.getInstance(newEventModal);
+    modal.hide();
 }
 
 

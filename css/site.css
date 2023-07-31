@@ -56,6 +56,9 @@ footer {
     --bs-btn-hover-border-color: #fad200;
     --bs-btn-hover-color: #fad200;
     --bs-btn-color: #ffffff;
+
+    --bs-btn-active-bg: var(--wf-theme-800);
+    --bs-btn-active-border-color: var(--wf-800);
 }
 
 body {
