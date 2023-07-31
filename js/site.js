@@ -251,8 +251,8 @@ function saveEvent() {
 
     let attendance = parseInt(document.getElementById('eventAttendance').value);
 
-    let dateString = document.getElementById('eventDate').value;
-    dateString = `${dateString} 00:00`;
+    let dateString = document.getElementById('eventDate').value; 
+    dateString = `${dateString} 00:00`; // does something with time when it is included as part of the date information in some locales
 
     let eventDate = new Date(dateString).toLocaleDateString();
 
@@ -274,7 +274,7 @@ function saveEvent() {
 
     buildDropDown();
 
-    let modalEvent = document.getElementById('newEventForm');
+    let newEventModal = document.getElementById('newEventModal');
     let modal = bootstrap.Modal.getInstance(newEventModal);
     modal.hide();
 }
@@ -287,33 +287,19 @@ function saveEvent() {
 
 
 
-
-
-
-
-
-
-
-
 //'for each loop' below does same thing as 'for loop' in function displayEvents
+
 // events.forEach(event => {
+//...
 
-//     let tableRow = eventTemplate.content.cloneNode(true);
+//});
 
-//     // -- get each property of an event
-//     // -- insert each property into the cloned template
-//          let eventNameCell = tableRow.querySelector('[data-id="event"]');
-//          eventNameCell.innerText = event.event;
+//     //***for each event:
+//for(let index = 0; index < events.length; index += 1) {
+    // --*** get one event
+    //let event = events[index];    
+//...
 
-//          tableRow.querySelector('[data-id="city"]').innerText = event.city;
-//          tableRow.querySelector('[data-id="state"]').innerText = event.state;
-//          tableRow.querySelector('[data-id="attendance"]').innerText = event.attendance;
-//          tableRow.querySelector('[data-id="date"]').innerText = event.date;
-
-//     // -- insert the event data into table
-//          eventsTable.appendChild(tableRow);
-
-// })
-
+//}
 
 
